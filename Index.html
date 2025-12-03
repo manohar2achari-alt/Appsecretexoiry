@@ -1,214 +1,591 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
-<html>
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <meta http-equiv="Content-Style-Type" content="text/css">
-  <title></title>
-  <meta name="Generator" content="Cocoa HTML Writer">
-  <meta name="CocoaVersion" content="2575.6">
-  <style type="text/css">
-    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
-    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
-  </style>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Azure Secret Automation Guide</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        .blob { position: absolute; filter: blur(40px); opacity: 0.4; z-index: 0; animation: float 10s infinite ease-in-out; }
+        @keyframes float {
+            0% { transform: translate(0px, 0px) scale(1); }
+            33% { transform: translate(30px, -50px) scale(1.1); }
+            66% { transform: translate(-20px, 20px) scale(0.9); }
+            100% { transform: translate(0px, 0px) scale(1); }
+        }
+        .code-syntax { color: #d4d4d4; }
+        .code-comment { color: #6a9955; }
+        .code-string { color: #ce9178; }
+        .code-keyword { color: #569cd6; }
+        .code-variable { color: #9cdcfe; }
+    </style>
+<script type="importmap">
+{
+  "imports": {
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.1/",
+    "react": "https://aistudiocdn.com/react@^19.2.1",
+    "lucide-react": "https://aistudiocdn.com/lucide-react@^0.555.0",
+    "react/": "https://aistudiocdn.com/react@^19.2.1/"
+  }
+}
+</script>
 </head>
-<body>
-<p class="p1">&lt;!DOCTYPE html&gt;</p>
-<p class="p1">&lt;html lang="en"&gt;</p>
-<p class="p1">&lt;head&gt;</p>
-<p class="p1">&lt;meta charset="UTF-8"&gt;</p>
-<p class="p1">&lt;title&gt;Azure Client Secret Expiration Automation&lt;/title&gt;</p>
-<p class="p1">&lt;meta name="viewport" content="width=device-width, initial-scale=1"&gt;</p>
-<p class="p2"><br></p>
-<p class="p1">&lt;style&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>body {</p>
-<p class="p1"><span class="Apple-converted-space">        </span>font-family: Arial, sans-serif;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>margin: 0;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>background: #f4f7fb;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>color: #1a1a1a;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>header {</p>
-<p class="p1"><span class="Apple-converted-space">        </span>background: #0A4CFF;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>padding: 20px;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>text-align: center;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>color: white;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>position: sticky;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>top: 0;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>z-index: 1000;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>nav a {</p>
-<p class="p1"><span class="Apple-converted-space">        </span>margin: 0 15px;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>color: white;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>text-decoration: none;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>font-weight: bold;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>font-size: 15px;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>section {</p>
-<p class="p1"><span class="Apple-converted-space">        </span>max-width: 900px;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>margin: auto;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>padding: 40px 20px;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>h2 {</p>
-<p class="p1"><span class="Apple-converted-space">        </span>color: #0A4CFF;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>margin-bottom: 10px;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>.card {</p>
-<p class="p1"><span class="Apple-converted-space">        </span>background: white;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>padding: 25px;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>border-radius: 12px;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>box-shadow: 0px 3px 10px rgba(0,0,0,0.1);</p>
-<p class="p1"><span class="Apple-converted-space">        </span>margin-bottom: 30px;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>code {</p>
-<p class="p1"><span class="Apple-converted-space">        </span>background: #eee;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>padding: 6px 10px;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>display: block;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>border-radius: 6px;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>white-space: pre-wrap;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>margin-top: 10px;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>font-size: 14px;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>footer {</p>
-<p class="p1"><span class="Apple-converted-space">        </span>background: #0A4CFF;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>text-align: center;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>padding: 15px;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>color: white;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>margin-top: 40px;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>html {</p>
-<p class="p1"><span class="Apple-converted-space">        </span>scroll-behavior: smooth;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p1">&lt;/style&gt;</p>
-<p class="p1">&lt;/head&gt;</p>
-<p class="p2"><br></p>
-<p class="p1">&lt;body&gt;</p>
-<p class="p2"><br></p>
-<p class="p1">&lt;header&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;h1&gt;Azure Client Secret Expiration Automation&lt;/h1&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;nav&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;a href="#overview"&gt;Overview&lt;/a&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;a href="#how"&gt;How It Works&lt;/a&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;a href="#steps"&gt;Steps&lt;/a&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;a href="#scripts"&gt;Scripts&lt;/a&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;a href="#contact"&gt;Contact&lt;/a&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;/nav&gt;</p>
-<p class="p1">&lt;/header&gt;</p>
-<p class="p2"><br></p>
-<p class="p1">&lt;section id="overview"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="card"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;h2&gt;Overview&lt;/h2&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;p&gt;Azure App Registration client secrets expire every 1–24 months. When secrets expire:&lt;/p&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;ul&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;li&gt;Applications fail authentication&lt;/li&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;li&gt;Critical services go down&lt;/li&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;li&gt;Admins scramble to rotate secrets&lt;/li&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;/ul&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;p&gt;This website gives you a simple and reliable way to AUTOMATE client secret renewal using Azure Automation + Managed Identity + Microsoft Graph API.&lt;/p&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
-<p class="p1">&lt;/section&gt;</p>
-<p class="p2"><br></p>
-<p class="p1">&lt;section id="how"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="card"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;h2&gt;How It Works&lt;/h2&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;p&gt;The automation flow works like this:&lt;/p&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;ul&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;li&gt;Azure Automation runbook runs daily&lt;/li&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;li&gt;Runbook uses a Managed Identity with Graph API permissions&lt;/li&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;li&gt;It scans all App Registrations for secrets expiring in the next X days&lt;/li&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;li&gt;If expiration is near → it auto-renews the secret&lt;/li&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;li&gt;Sends notifications through email/Teams&lt;/li&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;/ul&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;pre&gt;&lt;code&gt;</p>
-<p class="p1">[Automation Account MI] ---reads---&gt; [App Registrations]</p>
-<p class="p1"><span class="Apple-converted-space">                                </span>\</p>
-<p class="p1"><span class="Apple-converted-space">                                 </span>---&gt; renews secrets</p>
-<p class="p1"><span class="Apple-converted-space">                                  </span>\</p>
-<p class="p1"><span class="Apple-converted-space">                                   </span>---&gt; sends email alert</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;/code&gt;&lt;/pre&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
-<p class="p1">&lt;/section&gt;</p>
-<p class="p2"><br></p>
-<p class="p1">&lt;section id="steps"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="card"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;h2&gt;Step-by-Step Guide&lt;/h2&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;h3&gt;1. Create Azure Automation Account&lt;/h3&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;p&gt;Create a PowerShell 7.2 automation account with a System-Assigned Managed Identity.&lt;/p&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;h3&gt;2. Assign Managed Identity Permissions&lt;/h3&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;p&gt;Assign these Microsoft Graph API App roles:&lt;/p&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;ul&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;li&gt;&lt;strong&gt;Application.ReadWrite.All&lt;/strong&gt;&lt;/li&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;li&gt;&lt;strong&gt;Directory.Read.All&lt;/strong&gt;&lt;/li&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;/ul&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;h3&gt;3. List Expiring Secrets&lt;/h3&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;p&gt;Runbook calls Graph API to fetch all App credential expirations.&lt;/p&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;h3&gt;4. Auto-Renew Secrets&lt;/h3&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;p&gt;If a secret is expiring in next X days, script creates a new one.&lt;/p&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;h3&gt;5. Send Alerts&lt;/h3&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;p&gt;Email/SMS/Teams notification using Logic App or SendGrid.&lt;/p&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
-<p class="p1">&lt;/section&gt;</p>
-<p class="p2"><br></p>
-<p class="p1">&lt;section id="scripts"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="card"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;h2&gt;Scripts&lt;/h2&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;h3&gt;PowerShell Runbook – Detect Expiring Secrets&lt;/h3&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;code&gt;</p>
-<p class="p1">$today = Get-Date</p>
-<p class="p1">$threshold = $today.AddDays(30)</p>
-<p class="p2"><br></p>
-<p class="p1">$appRegs = Invoke-MgGraphRequest -Method GET -Uri "https://graph.microsoft.com/v1.0/applications?$select=id,displayName,passwordCredentials"</p>
-<p class="p2"><br></p>
-<p class="p1">foreach ($app in $appRegs.value) {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>foreach ($cred in $app.passwordCredentials) {</p>
-<p class="p1"><span class="Apple-converted-space">        </span>if ([datetime]$cred.endDateTime -lt $threshold) {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>Write-Output "Expiring: $($app.displayName) - $($cred.endDateTime)"</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p1">}</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;/code&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;h3&gt;PowerShell Runbook – Auto Renew Secret&lt;/h3&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;code&gt;</p>
-<p class="p1">$newSecret = @{</p>
-<p class="p1"><span class="Apple-converted-space">    </span>passwordCredential = @{</p>
-<p class="p1"><span class="Apple-converted-space">        </span>displayName = "AutoRenewed"</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p1">}</p>
-<p class="p2"><br></p>
-<p class="p1">Invoke-MgGraphRequest `</p>
-<p class="p1"><span class="Apple-converted-space">    </span>-Method POST `</p>
-<p class="p1"><span class="Apple-converted-space">    </span>-Uri "https://graph.microsoft.com/v1.0/applications/$($app.id)/addPassword" `</p>
-<p class="p1"><span class="Apple-converted-space">    </span>-Body ($newSecret | ConvertTo-Json)</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;/code&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;h3&gt;Kusto Query – Secret Monitoring&lt;/h3&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;code&gt;</p>
-<p class="p1">AppServiceAuthenticationAudit</p>
-<p class="p1">| where SecretExpiryDate &amp;lt; now() + 30d</p>
-<p class="p1">| project AppName, SecretExpiryDate</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;/code&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
-<p class="p1">&lt;/section&gt;</p>
-<p class="p2"><br></p>
-<p class="p1">&lt;section id="contact"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="card"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;h2&gt;Contact&lt;/h2&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;p&gt;For feedback or contributions, reach out:&lt;/p&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;p&gt;&lt;strong&gt;Email:&lt;/strong&gt; admin@example.com&lt;/p&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
-<p class="p1">&lt;/section&gt;</p>
-<p class="p2"><br></p>
-<p class="p1">&lt;footer&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>© 2025 Azure Automation — Client Secret Management</p>
-<p class="p1">&lt;/footer&gt;</p>
-<p class="p2"><br></p>
-<p class="p1">&lt;/body&gt;</p>
-<p class="p1">&lt;/html&gt;</p>
+<body class="bg-gray-50 text-gray-900 antialiased">
+
+    <!-- Navigation -->
+    <nav class="sticky top-0 z-50 bg-white border-b border-gray-200 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <a href="#" class="flex-shrink-0 flex items-center text-[#0078D4] hover:opacity-80 transition-opacity">
+                        <!-- Icon: Cloud -->
+                        <svg class="h-8 w-8 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.5 19c0-1.7-1.3-3-3-3h-1.1c-.1-1.2-.6-2.3-1.5-3.1-.9-.9-2-1.4-3.3-1.4-2.5 0-4.6 1.9-4.9 4.4H3c-1.7 0-3 1.3-3 3s1.3 3 3 3h14.5c1.4 0 2.5-1.1 2.5-2.5z"/></svg>
+                        <span class="font-bold text-xl tracking-tight text-gray-900">AzureOps<span class="text-[#0078D4]">Auto</span></span>
+                    </a>
+                </div>
+                
+                <!-- Desktop Menu -->
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="#overview" class="text-gray-600 hover:text-[#0078D4] px-3 py-2 rounded-md text-sm font-medium transition-colors">Overview</a>
+                    <a href="#how-it-works" class="text-gray-600 hover:text-[#0078D4] px-3 py-2 rounded-md text-sm font-medium transition-colors">How It Works</a>
+                    <a href="#step-by-step" class="text-gray-600 hover:text-[#0078D4] px-3 py-2 rounded-md text-sm font-medium transition-colors">Step-by-Step</a>
+                    <a href="#scripts" class="bg-[#0078D4] text-white hover:bg-[#005a9e] px-4 py-2 rounded-md text-sm font-medium transition-colors shadow-sm">Get Scripts</a>
+                </div>
+
+                <!-- Mobile Menu Button -->
+                <div class="flex items-center md:hidden">
+                    <button id="mobile-menu-btn" class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-[#0078D4]">
+                        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" /></svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <!-- Mobile Menu Panel -->
+        <div id="mobile-menu" class="hidden md:hidden bg-white border-b border-gray-200">
+            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                <a href="#overview" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-[#0078D4] hover:bg-gray-50">Overview</a>
+                <a href="#how-it-works" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-[#0078D4] hover:bg-gray-50">How It Works</a>
+                <a href="#step-by-step" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-[#0078D4] hover:bg-gray-50">Step-by-Step</a>
+                <a href="#scripts" class="block px-3 py-2 rounded-md text-base font-medium text-[#0078D4] font-bold">Get Scripts</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header class="bg-gradient-to-r from-[#0078D4] to-[#004e8c] text-white py-20 lg:py-28 relative overflow-hidden">
+        <div class="blob bg-blue-400 w-96 h-96 rounded-full top-0 right-0 -mr-20 -mt-20"></div>
+        <div class="blob bg-indigo-500 w-80 h-80 rounded-full bottom-0 left-0 -ml-20 -mb-20 animation-delay-2000"></div>
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="lg:w-2/3">
+                <div class="inline-flex items-center gap-2 bg-blue-800 bg-opacity-40 border border-blue-400 border-opacity-30 rounded-full px-4 py-1.5 mb-8 backdrop-blur-sm">
+                    <span class="w-2 h-2 rounded-full bg-green-400 animate-pulse"></span>
+                    <span class="text-xs font-semibold tracking-wide uppercase text-blue-50">Updated for Graph API</span>
+                </div>
+                <h1 class="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight mb-6 leading-tight">
+                    Never Let a Secret <br/>Expire Again
+                </h1>
+                <p class="text-xl text-blue-100 mb-8 leading-relaxed max-w-2xl">
+                    Automate client secret monitoring with Azure Automation. Receive email alerts <strong>60, 30, and 7 days</strong> before expiration to prevent production outages.
+                </p>
+                <div class="flex flex-col sm:flex-row gap-4">
+                    <a href="#step-by-step" class="inline-flex items-center justify-center bg-white text-[#0078D4] hover:bg-gray-100 px-8 py-4 rounded-lg font-bold shadow-lg transition-all hover:shadow-xl transform hover:-translate-y-1 text-lg">
+                        Start Setup
+                        <!-- Icon: Arrow Right -->
+                        <svg class="ml-2 h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
+                    </a>
+                    <a href="#scripts" class="inline-flex items-center justify-center bg-[#0078D4] border-2 border-white/30 hover:bg-[#006cbd] text-white px-8 py-4 rounded-lg font-bold transition-all backdrop-blur-sm text-lg">
+                        <!-- Icon: Terminal -->
+                        <svg class="mr-2 h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 17l6-6-6-6m8 14h8" /></svg>
+                        Get Scripts
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Overview Section -->
+    <section id="overview" class="py-16 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold text-gray-900 sm:text-4xl">Proactive Monitoring Strategy</h2>
+            </div>
+            <div class="grid md:grid-cols-3 gap-8 mt-12">
+                <!-- Card 1 -->
+                <div class="bg-white p-8 rounded-xl shadow-sm border border-gray-100 hover:border-[#0078D4] transition-all group">
+                    <div class="h-14 w-14 bg-red-50 text-red-600 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-red-600 group-hover:text-white transition-colors">
+                        <!-- Icon: Alert Triangle -->
+                        <svg class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">The Problem</h3>
+                    <p class="text-gray-600 leading-relaxed">
+                        App Registration secrets have a hard expiry. When they die, your app dies. Manual calendar reminders are fragile and easily missed by human operators.
+                    </p>
+                </div>
+                <!-- Card 2 -->
+                <div class="bg-white p-8 rounded-xl shadow-sm border border-gray-100 hover:border-[#0078D4] transition-all group">
+                    <div class="h-14 w-14 bg-blue-50 text-[#0078D4] rounded-2xl flex items-center justify-center mb-6 group-hover:bg-[#0078D4] group-hover:text-white transition-colors">
+                        <!-- Icon: Calendar -->
+                        <svg class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">The Cadence</h3>
+                    <p class="text-gray-600 leading-relaxed">
+                        We implement a rigid notification schedule. You will receive alerts exactly <strong>60 days</strong> (planning), <strong>30 days</strong> (warning), and <strong>7 days</strong> (critical) before expiration.
+                    </p>
+                </div>
+                <!-- Card 3 -->
+                <div class="bg-white p-8 rounded-xl shadow-sm border border-gray-100 hover:border-[#0078D4] transition-all group">
+                    <div class="h-14 w-14 bg-green-50 text-green-600 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-green-600 group-hover:text-white transition-colors">
+                        <!-- Icon: Mail -->
+                        <svg class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">The Delivery</h3>
+                    <p class="text-gray-600 leading-relaxed">
+                        Alerts are delivered via HTML email to your team's mailbox or ticketing system. The email identifies the specific app, App ID, and exact expiry date.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works Section -->
+    <section id="how-it-works" class="py-16 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold text-gray-900 sm:text-4xl">Architecture</h2>
+            </div>
+            
+            <div class="flex flex-col lg:flex-row items-center justify-center gap-16 mt-8">
+                <!-- Left: Flowchart -->
+                <div class="w-full lg:w-1/2 bg-white p-10 rounded-2xl shadow-xl border border-gray-200">
+                    <h4 class="text-sm font-bold text-gray-400 uppercase tracking-wider mb-8 flex items-center gap-2">
+                        <!-- Icon: Settings -->
+                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                        Automation Flow
+                    </h4>
+                    <div class="space-y-0 relative">
+                        <!-- Connecting Line -->
+                        <div class="absolute left-6 top-6 bottom-6 w-0.5 bg-gray-100"></div>
+
+                        <!-- Step 1 -->
+                        <div class="relative flex items-start gap-6 pb-12">
+                            <div class="z-10 flex-shrink-0 h-12 w-12 bg-[#0078D4] rounded-full flex items-center justify-center text-white shadow-lg ring-4 ring-white">
+                                <!-- Icon: Clock -->
+                                <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                            </div>
+                            <div>
+                                <h4 class="text-lg font-bold text-gray-900">Daily Trigger</h4>
+                                <p class="text-sm text-gray-500 mt-1">Azure Automation Schedule</p>
+                                <p class="text-gray-600 mt-2">The runbook executes once every 24 hours to scan the tenant.</p>
+                            </div>
+                        </div>
+
+                        <!-- Step 2 -->
+                        <div class="relative flex items-start gap-6 pb-12">
+                            <div class="z-10 flex-shrink-0 h-12 w-12 bg-white border-2 border-[#0078D4] rounded-full flex items-center justify-center text-[#0078D4] shadow-sm ring-4 ring-white">
+                                <!-- Icon: Key -->
+                                <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" /></svg>
+                            </div>
+                            <div>
+                                <h4 class="text-lg font-bold text-gray-900">Secret Inspection</h4>
+                                <p class="text-sm text-gray-500 mt-1">Managed Identity + Graph API</p>
+                                <p class="text-gray-600 mt-2">Script authenticates and pulls expiry dates for all apps using <code class="bg-gray-100 px-1 py-0.5 rounded text-sm">Application.Read.All</code>.</p>
+                            </div>
+                        </div>
+
+                        <!-- Step 3 -->
+                        <div class="relative flex items-start gap-6">
+                            <div class="z-10 flex-shrink-0 h-12 w-12 bg-green-500 rounded-full flex items-center justify-center text-white shadow-lg ring-4 ring-white">
+                                <!-- Icon: Mail -->
+                                <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
+                            </div>
+                            <div>
+                                <h4 class="text-lg font-bold text-gray-900">Mailbox Alert</h4>
+                                <p class="text-sm text-gray-500 mt-1">Send-MgUserMail</p>
+                                <p class="text-gray-600 mt-2">If 60/30/7 days remain, an email is sent FROM your automation mailbox TO your operations team.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right: Secure Info -->
+                <div class="w-full lg:w-1/3 space-y-6">
+                    <h3 class="text-2xl font-bold text-gray-900">Secure by Design</h3>
+                    <p class="text-gray-600">
+                        This solution uses <strong>Managed Identities</strong>, meaning:
+                    </p>
+                    <ul class="space-y-4">
+                        <li class="flex items-start gap-3">
+                            <!-- Icon: CheckCircle -->
+                            <svg class="w-6 h-6 text-green-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                            <span class="text-gray-700">No hardcoded client secrets in scripts</span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <svg class="w-6 h-6 text-green-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                            <span class="text-gray-700">No username/password storage</span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <svg class="w-6 h-6 text-green-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                            <span class="text-gray-700">Granular Graph API permissions</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Step by Step -->
+    <section id="step-by-step" class="py-16 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold text-gray-900 sm:text-4xl">Detailed Setup Guide</h2>
+            </div>
+            
+            <div class="space-y-16 mt-8 max-w-4xl mx-auto">
+                
+                <!-- Step 1 -->
+                <div class="flex gap-6">
+                    <div class="flex-shrink-0">
+                        <span class="flex items-center justify-center w-12 h-12 rounded-full border-2 border-gray-200 font-bold text-gray-500 bg-white">1</span>
+                    </div>
+                    <div class="flex-grow">
+                        <h3 class="text-2xl font-bold text-gray-900 mb-4">Create Automation Account</h3>
+                        <p class="text-gray-600 mb-4">
+                            1. Go to Azure Portal → Search <strong>"Automation Accounts"</strong> → Create.<br/>
+                            2. Select your Subscription and Resource Group.<br/>
+                            3. <strong>Critical:</strong> Under the "Identity" tab (or Advanced), ensure <strong>System assigned managed identity</strong> is checked/enabled. This identity will be used to run the scripts.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Step 2 -->
+                <div class="flex gap-6">
+                    <div class="flex-shrink-0">
+                        <span class="flex items-center justify-center w-12 h-12 rounded-full border-2 border-gray-200 font-bold text-gray-500 bg-white">2</span>
+                    </div>
+                    <div class="flex-grow">
+                        <h3 class="text-2xl font-bold text-gray-900 mb-4">Import PowerShell Modules</h3>
+                        <p class="text-gray-600 mb-4">
+                            The script relies on the Microsoft Graph SDK. You must import these modules into your Automation Account from the Gallery:
+                        </p>
+                        <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-4 text-sm text-yellow-800">
+                            Go to your Automation Account → Shared Resources → Modules → Add a module → Browse Gallery.
+                        </div>
+                        <ul class="list-disc list-inside text-gray-700 space-y-2 mb-4 font-mono text-sm bg-gray-50 p-4 rounded-md">
+                            <li>Microsoft.Graph.Authentication <span class="text-gray-400 text-xs">(Login)</span></li>
+                            <li>Microsoft.Graph.Applications <span class="text-gray-400 text-xs">(Read Apps)</span></li>
+                            <li>Microsoft.Graph.Users.Actions <span class="text-gray-400 text-xs">(Send Email)</span></li>
+                        </ul>
+                        <p class="text-sm text-gray-500">Note: Ensure you select Runtime version 5.1 (or 7.2). Both are supported by these modules.</p>
+                    </div>
+                </div>
+
+                <!-- Step 3 -->
+                <div class="flex gap-6">
+                    <div class="flex-shrink-0">
+                        <span class="flex items-center justify-center w-12 h-12 rounded-full border-2 border-gray-200 font-bold text-gray-500 bg-white">3</span>
+                    </div>
+                    <div class="flex-grow">
+                        <h3 class="text-2xl font-bold text-gray-900 mb-4">Assign Graph API Permissions</h3>
+                        <p class="text-gray-600 mb-4">
+                            The Managed Identity needs permission to read application secrets and send emails. This <strong>cannot</strong> be done in the portal UI; you must run this script locally <strong>once</strong> by an admin.
+                        </p>
+                        <div class="bg-blue-50 p-4 rounded-md mb-4 text-sm text-blue-800 flex items-start">
+                            <!-- Icon: UserCheck -->
+                            <svg class="w-5 h-5 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
+                            <span><strong>Tip:</strong> You need the Object ID of the Automation Account's Managed Identity (found in the Identity blade).</span>
+                        </div>
+                        <!-- Code Block 1 -->
+                        <div class="rounded-lg overflow-hidden border border-gray-200 shadow-md bg-[#1e1e1e] text-gray-100 my-6">
+                            <div class="flex justify-between items-center px-4 py-2 bg-[#2d2d2d] border-b border-[#3e3e3e]">
+                                <span class="text-xs font-semibold text-gray-400 uppercase tracking-wider">SetupScript.ps1 - Run locally</span>
+                                <button class="copy-btn text-gray-400 hover:text-white transition-colors" title="Copy to clipboard">
+                                    <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg>
+                                </button>
+                            </div>
+                            <div class="p-4 overflow-x-auto">
+<pre class="font-mono text-sm leading-relaxed whitespace-pre"><code><span class="code-comment"># RUN THIS LOCALLY (One-time setup)
+# This script grants the Managed Identity permission to:
+# 1. Read all App Registrations (Application.Read.All)
+# 2. Send emails as ANY user (Mail.Send) - Use with caution!</span>
+
+<span class="code-variable">$TenantId</span> = <span class="code-string">"your-tenant-id"</span>
+<span class="code-comment"># Get this Object ID from the Automation Account -> Identity blade</span>
+<span class="code-variable">$ManagedIdentityObjectId</span> = <span class="code-string">"paste-object-id-of-managed-identity-here"</span>
+
+<span class="code-keyword">Connect-MgGraph</span> -TenantId <span class="code-variable">$TenantId</span> -Scopes <span class="code-string">"AppRoleAssignment.ReadWrite.All"</span>, <span class="code-string">"Application.Read.All"</span>
+
+<span class="code-variable">$GraphAppId</span> = <span class="code-string">"00000003-0000-0000-c000-000000000000"</span> <span class="code-comment"># Microsoft Graph Service Principal</span>
+
+<span class="code-comment"># 1. Grant Application.Read.All</span>
+<span class="code-variable">$AppReadRole</span> = <span class="code-keyword">Get-MgServicePrincipalAppRoleAssignment</span> -ServicePrincipalId <span class="code-variable">$GraphAppId</span> | 
+               <span class="code-keyword">Where-Object</span> {<span class="code-variable">$_</span>.Value -eq <span class="code-string">"Application.Read.All"</span>} 
+
+<span class="code-keyword">New-MgServicePrincipalAppRoleAssignment</span> -ServicePrincipalId <span class="code-variable">$ManagedIdentityObjectId</span> -PrincipalId <span class="code-variable">$ManagedIdentityObjectId</span> -ResourceId <span class="code-variable">$GraphAppId</span> -AppRoleId <span class="code-variable">$AppReadRole</span>.Id
+
+<span class="code-comment"># 2. Grant Mail.Send
+# This allows the automation account to send mail via Send-MgUserMail</span>
+<span class="code-variable">$MailSendRole</span> = <span class="code-keyword">Get-MgServicePrincipalAppRoleAssignment</span> -ServicePrincipalId <span class="code-variable">$GraphAppId</span> | 
+                <span class="code-keyword">Where-Object</span> {<span class="code-variable">$_</span>.Value -eq <span class="code-string">"Mail.Send"</span>}
+
+<span class="code-keyword">New-MgServicePrincipalAppRoleAssignment</span> -ServicePrincipalId <span class="code-variable">$ManagedIdentityObjectId</span> -PrincipalId <span class="code-variable">$ManagedIdentityObjectId</span> -ResourceId <span class="code-variable">$GraphAppId</span> -AppRoleId <span class="code-variable">$MailSendRole</span>.Id
+
+<span class="code-keyword">Write-Host</span> <span class="code-string">"Permissions assigned successfully."</span></code></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 4 -->
+                <div class="flex gap-6">
+                    <div class="flex-shrink-0">
+                        <span class="flex items-center justify-center w-12 h-12 rounded-full border-2 border-gray-200 font-bold text-gray-500 bg-white">4</span>
+                    </div>
+                    <div class="flex-grow">
+                        <h3 class="text-2xl font-bold text-gray-900 mb-4">Create & Configure Runbook</h3>
+                        <p class="text-gray-600 mb-4">
+                            1. Create a new <strong>PowerShell</strong> Runbook named <code>Monitor-AppSecrets</code>.<br/>
+                            2. Paste the script from the "Scripts" section below.<br/>
+                            3. <strong>Update Variables:</strong> Look for <code>$SenderMailbox</code> in the script.
+                        </p>
+                        <div class="bg-red-50 border-l-4 border-red-400 p-4 mb-2 text-sm text-gray-800">
+                            <strong>Sender Mailbox Requirement:</strong><br/>
+                            The <code>$SenderMailbox</code> variable must be a valid User Mailbox or Shared Mailbox in your tenant. The <code>Mail.Send</code> permission allows the Managed Identity to impersonate this user to send the alert.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 5 -->
+                <div class="flex gap-6">
+                    <div class="flex-shrink-0">
+                        <span class="flex items-center justify-center w-12 h-12 rounded-full border-2 border-gray-200 font-bold text-gray-500 bg-white">5</span>
+                    </div>
+                    <div class="flex-grow">
+                        <h3 class="text-2xl font-bold text-gray-900 mb-4">Schedule the Runbook</h3>
+                        <p class="text-gray-600 mb-4">
+                            To ensure the 60, 30, and 7-day triggers fire on the correct day, the script must run daily.
+                        </p>
+                        <ul class="list-disc list-inside text-gray-600 bg-gray-50 p-4 rounded-lg border border-gray-100">
+                            <li>In the Runbook, click <strong>Schedules</strong> → Add a schedule.</li>
+                            <li>Create a new schedule: "Daily-6AM".</li>
+                            <li>Recurrence: <strong>Daily</strong>.</li>
+                            <li>Link it to your runbook.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Scripts Section -->
+    <section id="scripts" class="py-16 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold text-gray-900 sm:text-4xl">Production Script</h2>
+                <p class="mt-4 text-lg text-gray-600 max-w-2xl mx-auto">Copy, paste, and configure variables.</p>
+            </div>
+            
+            <div class="max-w-4xl mx-auto">
+                <div class="bg-blue-50 border-l-4 border-[#0078D4] p-4 mb-6">
+                    <div class="flex">
+                        <div class="flex-shrink-0">
+                            <!-- Icon: Terminal -->
+                            <svg class="h-5 w-5 text-[#0078D4]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 17l6-6-6-6m8 14h8" /></svg>
+                        </div>
+                        <div class="ml-3">
+                            <p class="text-sm text-blue-700">
+                                <strong>Note:</strong> Update <code>$SenderMailbox</code> and <code>$RecipientEmail</code> at the top of the script before publishing.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Code Block 2 -->
+                <div class="rounded-lg overflow-hidden border border-gray-200 shadow-md bg-[#1e1e1e] text-gray-100 my-6">
+                    <div class="flex justify-between items-center px-4 py-2 bg-[#2d2d2d] border-b border-[#3e3e3e]">
+                        <span class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Runbook: Monitor-AppSecrets.ps1</span>
+                        <button class="copy-btn text-gray-400 hover:text-white transition-colors" title="Copy to clipboard">
+                            <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg>
+                        </button>
+                    </div>
+                    <div class="p-4 overflow-x-auto">
+<pre class="font-mono text-sm leading-relaxed whitespace-pre"><code><span class="code-comment"># PowerShell Runbook: Check-AppRegistrationSecrets
+# Required Modules: 
+#   - Microsoft.Graph.Authentication
+#   - Microsoft.Graph.Applications
+#   - Microsoft.Graph.Users.Actions (Required for Send-MgUserMail)</span>
+
+param(
+    <span class="code-comment"># IMPORTANT: The Managed Identity must have 'Mail.Send' permission
+    # and this mailbox must exist in your tenant.</span>
+    [string]<span class="code-variable">$SenderMailbox</span> = <span class="code-string">"automation-alerts@contoso.com"</span>,
+    
+    <span class="code-comment"># Who receives the alerts?</span>
+    [string]<span class="code-variable">$RecipientEmail</span> = <span class="code-string">"admin-team@contoso.com"</span>
+)
+
+<span class="code-variable">$ErrorActionPreference</span> = <span class="code-string">"Stop"</span>
+
+try {
+    <span class="code-comment"># 1. Connect to Graph using Managed Identity</span>
+    <span class="code-keyword">Write-Output</span> <span class="code-string">"Connecting to Microsoft Graph..."</span>
+    <span class="code-keyword">Connect-MgGraph</span> -Identity
+    
+    <span class="code-comment"># 2. Get all applications with secrets
+    # We fetch all apps to ensure we don't miss any.</span>
+    <span class="code-variable">$apps</span> = <span class="code-keyword">Get-MgApplication</span> -All -Property DisplayName, AppId, PasswordCredentials
+
+    <span class="code-variable">$alertItems</span> = @()
+
+    foreach (<span class="code-variable">$app</span> in <span class="code-variable">$apps</span>) {
+        foreach (<span class="code-variable">$secret</span> in <span class="code-variable">$app</span>.PasswordCredentials) {
+            <span class="code-variable">$expiryDate</span> = <span class="code-variable">$secret</span>.EndDateTime
+            
+            <span class="code-comment"># Check if secret has an expiry date</span>
+            if (<span class="code-variable">$null</span> -ne <span class="code-variable">$expiryDate</span>) {
+                <span class="code-variable">$daysLeft</span> = (<span class="code-variable">$expiryDate</span> - (<span class="code-keyword">Get-Date</span>)).Days
+
+                <span class="code-comment"># 3. Check for specific notification windows: 60, 30, or 7 days</span>
+                if (<span class="code-variable">$daysLeft</span> -eq 60 -or <span class="code-variable">$daysLeft</span> -eq 30 -or <span class="code-variable">$daysLeft</span> -eq 7) {
+                    
+                    <span class="code-variable">$priority</span> = <span class="code-string">"Warning"</span>
+                    if (<span class="code-variable">$daysLeft</span> -le 7) { <span class="code-variable">$priority</span> = <span class="code-string">"URGENT"</span> }
+                    
+                    <span class="code-variable">$alertItems</span> += [PSCustomObject]@{
+                        AppName = <span class="code-variable">$app</span>.DisplayName
+                        AppId = <span class="code-variable">$app</span>.AppId
+                        DaysLeft = <span class="code-variable">$daysLeft</span>
+                        Priority = <span class="code-variable">$priority</span>
+                        ExpiresOn = <span class="code-variable">$expiryDate</span>.ToString(<span class="code-string">"yyyy-MM-dd"</span>)
+                    }
+                    
+                    <span class="code-keyword">Write-Output</span> <span class="code-string">"DETECTED: $($app.DisplayName) expires in $daysLeft days."</span>
+                }
+            }
+        }
+    }
+
+    <span class="code-comment"># 4. Send Email if expiring secrets found</span>
+    if (<span class="code-variable">$alertItems</span>.Count -gt 0) {
+        <span class="code-keyword">Write-Output</span> <span class="code-string">"Sending alert email to $RecipientEmail..."</span>
+        
+        <span class="code-comment"># Build HTML Table</span>
+        <span class="code-variable">$tableRows</span> = <span class="code-string">""</span>
+        foreach (<span class="code-variable">$item</span> in <span class="code-variable">$alertItems</span>) {
+            <span class="code-comment"># Highlight urgent items in red</span>
+            <span class="code-variable">$color</span> = if (<span class="code-variable">$item</span>.DaysLeft -le 7) { <span class="code-string">"#ffebee"</span> } else { <span class="code-string">"#ffffff"</span> }
+            <span class="code-variable">$tableRows</span> += <span class="code-string">"&lt;tr style='background-color:$color'&gt;&lt;td&gt;$($item.AppName)&lt;/td&gt;&lt;td&gt;$($item.AppId)&lt;/td&gt;&lt;td&gt;&lt;strong&gt;$($item.DaysLeft)&lt;/strong&gt;&lt;/td&gt;&lt;td&gt;$($item.ExpiresOn)&lt;/td&gt;&lt;/tr&gt;"</span>
+        }
+
+        <span class="code-variable">$htmlBody</span> = <span class="code-string">@"
+        &lt;div style="font-family: Segoe UI, sans-serif;"&gt;
+            &lt;h3 style="color:#0078D4"&gt;Azure App Secret Expiry Alert&lt;/h3&gt;
+            &lt;p&gt;The following application secrets are approaching expiration:&lt;/p&gt;
+            &lt;table border='1' cellpadding='10' style='border-collapse:collapse; border:1px solid #ddd; width:100%;'&gt;
+                &lt;tr style='background-color:#f8f9fa; text-align:left;'&gt;&lt;th&gt;App Name&lt;/th&gt;&lt;th&gt;App ID&lt;/th&gt;&lt;th&gt;Days Left&lt;/th&gt;&lt;th&gt;Expiry Date&lt;/th&gt;&lt;/tr&gt;
+                $tableRows
+            &lt;/table&gt;
+            &lt;br/&gt;
+            &lt;p&gt;&lt;strong&gt;Action Required:&lt;/strong&gt; Please rotate these secrets immediately to prevent production outages.&lt;/p&gt;
+            &lt;p style="color:#666; font-size:12px;"&gt;Generated by Azure Automation | 60-30-7 Day Monitor&lt;/p&gt;
+        &lt;/div&gt;
+"@</span>
+
+        <span class="code-variable">$params</span> = @{
+            Message = @{
+                Subject = <span class="code-string">"[ACTION REQUIRED] Azure Secrets Expiring ($($alertItems.Count) Apps)"</span>
+                Body = @{
+                    ContentType = <span class="code-string">"HTML"</span>
+                    Content = <span class="code-variable">$htmlBody</span>
+                }
+                ToRecipients = @(
+                    @{ EmailAddress = @{ Address = <span class="code-variable">$RecipientEmail</span> } }
+                )
+            }
+            SaveToSentItems = <span class="code-variable">$false</span>
+        }
+
+        <span class="code-comment"># Send using the Sender Mailbox
+        # The Managed Identity acts on behalf of this mailbox.</span>
+        <span class="code-keyword">Send-MgUserMail</span> -UserId <span class="code-variable">$SenderMailbox</span> -BodyParameter <span class="code-variable">$params</span>
+        
+        <span class="code-keyword">Write-Output</span> <span class="code-string">"Email sent successfully."</span>
+    } else {
+        <span class="code-keyword">Write-Output</span> <span class="code-string">"No secrets found expiring specifically at 60, 30, or 7 days today."</span>
+    }
+
+} catch {
+    <span class="code-keyword">Write-Error</span> <span class="code-string">"An error occurred: $_"</span>
+}</code></pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-gray-400 py-12 border-t border-gray-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid md:grid-cols-3 gap-8 mb-8">
+                <div>
+                    <div class="flex items-center text-white mb-4">
+                        <svg class="h-6 w-6 mr-2 text-[#0078D4]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.5 19c0-1.7-1.3-3-3-3h-1.1c-.1-1.2-.6-2.3-1.5-3.1-.9-.9-2-1.4-3.3-1.4-2.5 0-4.6 1.9-4.9 4.4H3c-1.7 0-3 1.3-3 3s1.3 3 3 3h14.5c1.4 0 2.5-1.1 2.5-2.5z"/></svg>
+                        <span class="font-bold text-lg">AzureOpsAuto</span>
+                    </div>
+                    <p class="text-sm text-gray-500">
+                        Simplifying Azure governance one script at a time.
+                    </p>
+                </div>
+                <div>
+                    <h4 class="text-white font-semibold mb-4">Docs</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="https://learn.microsoft.com/en-us/graph/api/user-sendmail" class="hover:text-white transition-colors">Graph API: Send Mail</a></li>
+                        <li><a href="https://learn.microsoft.com/en-us/azure/automation/automation-intro" class="hover:text-white transition-colors">Azure Automation Overview</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-white font-semibold mb-4">Support</h4>
+                    <div class="flex items-center gap-2 text-sm">
+                        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
+                        <span class="text-gray-500">support@example.com</span>
+                    </div>
+                </div>
+            </div>
+            <div class="border-t border-gray-800 pt-8 text-center text-sm">
+                &copy; <script>document.write(new Date().getFullYear())</script> AzureOpsAuto. Not affiliated with Microsoft.
+            </div>
+        </div>
+    </footer>
+
+    <!-- Interactive Scripts -->
+    <script>
+        // Mobile Menu Toggle
+        const menuBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        
+        menuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        // Copy Code Functionality
+        document.querySelectorAll('.copy-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const codeBlock = e.target.closest('.rounded-lg').querySelector('code');
+                const textToCopy = codeBlock.innerText;
+                
+                navigator.clipboard.writeText(textToCopy).then(() => {
+                    const originalHTML = btn.innerHTML;
+                    // Change icon to Check
+                    btn.innerHTML = '<svg class="h-4 w-4 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>';
+                    
+                    setTimeout(() => {
+                        btn.innerHTML = originalHTML;
+                    }, 2000);
+                });
+            });
+        });
+    </script>
 </body>
 </html>
